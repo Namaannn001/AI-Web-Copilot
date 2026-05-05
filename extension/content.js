@@ -12,8 +12,9 @@
 
   const CONTAINER_ID = 'ai-web-copilot-root';
   const MAX_CONTENT_LENGTH = 3000;
-  const STORAGE_KEY_HISTORY = 'copilot_history';
+  const STORAGE_KEY_HISTORY  = 'copilot_history';
   const STORAGE_KEY_POSITION = 'copilot_position';
+  const STORAGE_KEY_SETTINGS = 'copilot_settings';
 
   // ════════════════════════════════════════════════════════
   //  STATE
@@ -88,27 +89,28 @@
 
   // ── Get Panel Elements ──────────────────────────────────
   const els = {
-    header: panel.querySelector('.panel-header'),
-    title: panel.querySelector('.panel-title'),
-    minimizeBtn: panel.querySelector('.btn-minimize'),
-    closeBtn: panel.querySelector('.btn-close'),
-    historyBtn: panel.querySelector('.btn-history'),
-    body: panel.querySelector('.panel-body'),
-    modeBar: panel.querySelector('.mode-bar'),
-    responseArea: panel.querySelector('.response-area'),
+    header:          panel.querySelector('.panel-header'),
+    title:           panel.querySelector('.panel-title'),
+    minimizeBtn:     panel.querySelector('.btn-minimize'),
+    closeBtn:        panel.querySelector('.btn-close'),
+    historyBtn:      panel.querySelector('.btn-history'),
+    settingsBtn:     panel.querySelector('.btn-settings'),
+    body:            panel.querySelector('.panel-body'),
+    modeBar:         panel.querySelector('.mode-bar'),
+    responseArea:    panel.querySelector('.response-area'),
     responseContent: panel.querySelector('.response-content'),
-    inputArea: panel.querySelector('.input-area'),
-    inputField: panel.querySelector('.input-field'),
-    sendBtn: panel.querySelector('.btn-send'),
-    loader: panel.querySelector('.loader'),
-    statusBar: panel.querySelector('.status-bar'),
-    statusText: panel.querySelector('.status-text'),
-    copyBtn: panel.querySelector('.btn-copy'),
-    exportPdfBtn: panel.querySelector('.btn-export-pdf'),
-    stopBtn: panel.querySelector('.btn-stop'),
-    historyPanel: panel.querySelector('.history-panel'),
-    historyList: panel.querySelector('.history-list'),
-    historyBack: panel.querySelector('.btn-history-back'),
+    inputArea:       panel.querySelector('.input-area'),
+    inputField:      panel.querySelector('.input-field'),
+    sendBtn:         panel.querySelector('.btn-send'),
+    loader:          panel.querySelector('.loader'),
+    statusBar:       panel.querySelector('.status-bar'),
+    statusText:      panel.querySelector('.status-text'),
+    copyBtn:         panel.querySelector('.btn-copy'),
+    exportPdfBtn:    panel.querySelector('.btn-export-pdf'),
+    stopBtn:         panel.querySelector('.btn-stop'),
+    historyPanel:    panel.querySelector('.history-panel'),
+    historyList:     panel.querySelector('.history-list'),
+    historyBack:     panel.querySelector('.btn-history-back'),
   };
 
   // ════════════════════════════════════════════════════════
@@ -126,6 +128,10 @@
   els.sendBtn.addEventListener('click', () => onSend());
   els.historyBtn.addEventListener('click', () => toggleHistory());
   els.historyBack.addEventListener('click', () => toggleHistory());
+  els.settingsBtn.addEventListener('click', () => {
+    chrome.runtime.sendMessage({ type: 'OPEN_OPTIONS' });
+    closeAssistant();
+  });
   els.copyBtn.addEventListener('click', () => copyResponse());
   els.exportPdfBtn.addEventListener('click', () => exportPDF());
   els.stopBtn.addEventListener('click', () => stopStream());
@@ -392,7 +398,11 @@
   function handleStreamError(error) {
     setLoading(false);
     setStatus('Error: ' + error, 'error');
-    els.responseContent.innerHTML = `<div class="error-msg">❌ ${escapeHTML(error)}<br><br><small>Make sure the backend server is running on localhost:3002</small></div>`;
+    const isKeyError = /api key|no api key|unauthorized|401/i.test(error);
+    const hint = isKeyError
+      ? 'Open the <strong>⚙️ Settings</strong> panel and add your API key.'
+      : 'Check your API key and provider in <strong>⚙️ Settings</strong>.';
+    els.responseContent.innerHTML = `<div class="error-msg">❌ ${escapeHTML(error)}<br><br><small>${hint}</small></div>`;
     els.responseArea.style.display = 'block';
   }
 
@@ -669,6 +679,7 @@
         </div>
         <div class="panel-controls">
           <button class="panel-btn btn-history" title="History">🕐</button>
+          <button class="panel-btn btn-settings" title="Settings">⚙️</button>
           <button class="panel-btn btn-minimize" title="Minimize">─</button>
           <button class="panel-btn btn-close" title="Close (Esc)">✕</button>
         </div>

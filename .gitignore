@@ -1,6 +1,6 @@
-node_modules/
-.env
+# Log files
 *.log
 
-# Keep the extension config private
-extension/config.js
+# Ignore local helper scripts
+create_icons.ps1
+

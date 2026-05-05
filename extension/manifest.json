@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "AI Web Copilot",
-  "version": "1.0.0",
-  "description": "Your AI assistant on every website — summarize, explain, fact-check, and take notes instantly.",
+  "version": "2.0.0",
+  "description": "Your AI assistant on every website — summarize, explain, fact-check, and take notes. Bring your own API key. Works with ChatGPT, Gemini, Claude, Grok & more.",
   "permissions": [
     "contextMenus",
     "activeTab",
@@ -10,11 +10,16 @@
     "storage"
   ],
   "host_permissions": [
-    "http://localhost:3002/*"
+    "https://api.openai.com/*",
+    "https://generativelanguage.googleapis.com/*",
+    "https://api.anthropic.com/*",
+    "https://api.x.ai/*",
+    "https://api.mistral.ai/*"
   ],
   "background": {
     "service_worker": "background.js"
   },
+  "options_page": "options.html",
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
@@ -32,8 +37,8 @@
     }
   },
   "icons": {
-    "16": "icons/icon16.png",
-    "48": "icons/icon48.png",
+    "16":  "icons/icon16.png",
+    "48":  "icons/icon48.png",
     "128": "icons/icon128.png"
   },
   "action": {

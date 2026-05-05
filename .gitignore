@@ -2,5 +2,5 @@
 *.log
 
 # Ignore local helper scripts
-create_icons.ps1
+.create_icons.ps1
 

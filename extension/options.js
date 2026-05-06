@@ -1,36 +1,17 @@
 const PROVIDER_MODELS = {
-  openai: [
-    { id: 'gpt-4o-mini', name: 'GPT-4o Mini (Fast)' },
-    { id: 'gpt-4o', name: 'GPT-4o (Smart)' },
-    { id: 'gpt-4-turbo', name: 'GPT-4 Turbo' }
-  ],
   gemini: [
-    { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash (Fast)' },
-    { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro (Smart)' },
-    { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro (Latest)' }
-  ],
-  claude: [
-    { id: 'claude-3-haiku-20240307', name: 'Claude 3 Haiku (Fast)' },
-    { id: 'claude-3-5-sonnet-20240620', name: 'Claude 3.5 Sonnet (Smart)' },
-    { id: 'claude-3-opus-20240229', name: 'Claude 3 Opus (Advanced)' }
-  ],
-  grok: [
-    { id: 'grok-3-mini', name: 'Grok 3 Mini (Fast)' },
-    { id: 'grok-3', name: 'Grok 3 (Smart)' }
-  ],
-  mistral: [
-    { id: 'mistral-small-latest', name: 'Mistral Small' },
-    { id: 'mistral-large-latest', name: 'Mistral Large' }
+    { id: 'gemini-3.1-pro-preview', name: 'Gemini 3.1 Pro (Preview) — Advanced reasoning & agentic workflows' },
+    { id: 'gemini-3-flash-preview', name: 'Gemini 3 Flash (Preview) — High-efficiency & speed' },
+    { id: 'gemini-3.1-flash-lite-preview', name: 'Gemini 3.1 Flash-Lite (Preview) — Low latency & high-volume' },
+    { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro (Stable) — Reliable, high-capability' },
+    { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash (Stable) — Best price-performance' }
   ]
 };
 
 const PROVIDER_LINKS = {
-  openai: 'https://platform.openai.com/api-keys',
-  gemini: 'https://aistudio.google.com/app/apikey',
-  claude: 'https://console.anthropic.com/settings/keys',
-  grok: 'https://console.x.ai/',
-  mistral: 'https://console.mistral.ai/api-keys/'
+  gemini: 'https://aistudio.google.com/app/apikey'
 };
+
 
 const els = {
   provider: document.getElementById('provider'),
@@ -52,10 +33,10 @@ function updateModelOptions() {
 
 function loadSettings() {
   chrome.storage.local.get('copilot_settings', (data) => {
-    const settings = data.copilot_settings || { provider: 'openai', model: 'gpt-4o-mini', apiKey: '' };
-    els.provider.value = settings.provider || 'openai';
+    const settings = data.copilot_settings || { provider: 'gemini', model: 'gemini-2.5-flash', apiKey: '' };
+    // Provider is always gemini (hidden input)
     updateModelOptions();
-    els.model.value = settings.model || 'gpt-4o-mini';
+    els.model.value = settings.model || 'gemini-2.5-flash';
     els.apikey.value = settings.apiKey || '';
   });
 }
@@ -108,7 +89,6 @@ function testApiKey() {
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', loadSettings);
-els.provider.addEventListener('change', updateModelOptions);
 els.btnSave.addEventListener('click', () => saveSettings(true));
 els.btnTest.addEventListener('click', testApiKey);
 
